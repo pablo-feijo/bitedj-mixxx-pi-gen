@@ -1,0 +1,7 @@
+<!DOCTYPE SoundManagerConfig>
+<SoundManagerConfig api="ALSA" deck_count="4" force_network_clock="0" latency="5" samplerate="44100" sync_buffers="2">
+ <SoundDevice name="DDJ-400: USB Audio (hw:3,0)">
+  <output channel="0" channel_count="2" index="0" type="Master"/>
+  <output channel="2" channel_count="2" index="0" type="Headphone"/>
+ </SoundDevice>
+</SoundManagerConfig>

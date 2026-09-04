@@ -1,33 +1,36 @@
 #!/bin/bash -e
-## Build Mixxx
-mkdir -p ${BASE_DIR}/.ccache/
-mkdir -p "${ROOTFS_DIR}/ccache"
-mount --bind ${BASE_DIR}/.ccache  "${ROOTFS_DIR}/ccache"
-on_chroot << EOF
-    git clone --branch 2.5 https://github.com/mixxxdj/mixxx.git /code/
-    cd /code/
-    tools/debian_buildenv.sh setup
-    git rev-parse HEAD > /opt/mixxx.version
-    git describe --tags --always > /opt/mixxx.tag
-    export CCACHE_DIR=/ccache
-    ccache -M 10G
-    export CCACHE_NOCOMPRESS="true"
-    export CTEST_PARALLEL_LEVEL="$(nproc)"
-    export CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
-    export PATH="$HOME/.local/bin:$PATH"
-    export GTEST_COLOR="1"
-    export CTEST_OUTPUT_ON_FAILURE="1"
-    export QT_QPA_PLATFORM="offscreen"
-    mkdir -p build && cd build
-    cmake \
-      -DKEYFINDER=ON -DFFMPEG=ON -DMAD=ON -DMODPLUG=ON -DWAVPACK=ON -DBULK=ON \
-      -DCMAKE_INSTALL_PREFIX=/usr/ -S /code -B /code/build
-    cmake --build /code/build --target install
-    ccache -s
-    cpack -G DEB
-EOF
 
-unmount "${BASE_DIR}/.ccache"
-mkdir -p "$DEPLOY_DIR"
-cp ${ROOTFS_DIR}/code/build/*.deb "$DEPLOY_DIR/"
-rm -rf ${ROOTFS_DIR}/code/
+## Install BiteDJ from pre-built dist-linux
+BITEDJ_DIST=""
+if [ -d "${BASE_DIR}/dist-linux" ]; then
+    BITEDJ_DIST="${BASE_DIR}/dist-linux"
+elif [ -d "${BASE_DIR}/../dist-linux" ]; then
+    BITEDJ_DIST="${BASE_DIR}/../dist-linux"
+elif [ -d "/dist-linux" ]; then
+    BITEDJ_DIST="/dist-linux"
+fi
+
+if [ -z "${BITEDJ_DIST}" ] || [ ! -f "${BITEDJ_DIST}/bin/mixxx" -a ! -f "${BITEDJ_DIST}/bin/bitedj" ]; then
+    echo "ERROR: BiteDJ build artifacts not found! Expected ${BITEDJ_DIST:-/dist-linux}/bin/mixxx" >&2
+    echo "Please build BiteDJ first using ./docker-build.sh" >&2
+    exit 1
+fi
+
+echo "==> Installing pre-built BiteDJ from ${BITEDJ_DIST} into rootfs..."
+mkdir -p "${ROOTFS_DIR}/usr"
+cp -a "${BITEDJ_DIST}/"* "${ROOTFS_DIR}/usr/"
+
+# Ensure binary symlinks and execute permissions
+if [ -f "${ROOTFS_DIR}/usr/bin/mixxx" ] && [ ! -f "${ROOTFS_DIR}/usr/bin/bitedj" ]; then
+    ln -sf mixxx "${ROOTFS_DIR}/usr/bin/bitedj"
+elif [ -f "${ROOTFS_DIR}/usr/bin/bitedj" ] && [ ! -f "${ROOTFS_DIR}/usr/bin/mixxx" ]; then
+    ln -sf bitedj "${ROOTFS_DIR}/usr/bin/mixxx"
+fi
+chmod 755 "${ROOTFS_DIR}/usr/bin/mixxx" "${ROOTFS_DIR}/usr/bin/bitedj" 2>/dev/null || true
+
+# Set version metadata expected by export-image stage
+mkdir -p "${ROOTFS_DIR}/opt"
+echo "bitedj-1.0" > "${ROOTFS_DIR}/opt/mixxx.version"
+echo "v1.0" > "${ROOTFS_DIR}/opt/mixxx.tag"
+echo "bitedj-1.0" > "${ROOTFS_DIR}/opt/bitedj.version"
+echo "==> BiteDJ installed successfully."

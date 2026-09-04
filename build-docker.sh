@@ -82,7 +82,7 @@ fi
 # Modify original build-options to allow config file to be mounted in the docker container
 BUILD_OPTS="$(echo "${BUILD_OPTS:-}" | sed -E 's@\-c\s?([^ ]+)@-c /config@')"
 
-${DOCKER} build --build-arg BASE_IMAGE=debian:trixie -t pi-gen "${DIR}"
+${DOCKER} build --build-arg BASE_IMAGE=debian:bookworm -t pi-gen "${DIR}"
 
 if [ "${CONTAINER_EXISTS}" != "" ]; then
   DOCKER_CMDLINE_NAME="${CONTAINER_NAME}_cont"
@@ -97,7 +97,7 @@ fi
 # Check if binfmt_misc is required
 binfmt_misc_required=1
 case $(uname -m) in
-  aarch64)
+  aarch64|arm64)
     binfmt_misc_required=0
     ;;
   arm*)
@@ -130,14 +130,33 @@ if [[ "${binfmt_misc_required}" == "1" ]]; then
   fi
 fi
 
+HOST_DEV_MOUNT=""
+HOST_MODULES_MOUNT=""
+if [ "$(uname -s)" = "Linux" ]; then
+  HOST_DEV_MOUNT="-v /dev:/dev"
+  if [ -d /lib/modules ]; then
+    HOST_MODULES_MOUNT="-v /lib/modules:/lib/modules"
+  fi
+fi
+
+DIST_MOUNT=""
+if [ -d "${DIR}/../dist-linux" ]; then
+  DIST_PATH="$(cd "${DIR}/.." && pwd)/dist-linux"
+  DIST_MOUNT="-v ${DIST_PATH}:/dist-linux:ro -v ${DIST_PATH}:/pi-gen/dist-linux:ro"
+elif [ -d "${DIR}/dist-linux" ]; then
+  DIST_PATH="$(cd "${DIR}" && pwd)/dist-linux"
+  DIST_MOUNT="-v ${DIST_PATH}:/dist-linux:ro -v ${DIST_PATH}:/pi-gen/dist-linux:ro"
+fi
+
 trap 'echo "got CTRL+C... please wait 5s" && ${DOCKER} stop -t 5 ${DOCKER_CMDLINE_NAME}' SIGINT SIGTERM
 time ${DOCKER} run \
   $DOCKER_CMDLINE_PRE \
   --name "${DOCKER_CMDLINE_NAME}" \
   --privileged \
   --cap-add=ALL \
-  -v /dev:/dev \
-  -v /lib/modules:/lib/modules \
+  ${HOST_DEV_MOUNT} \
+  ${HOST_MODULES_MOUNT} \
+  ${DIST_MOUNT} \
   ${PIGEN_DOCKER_OPTS} \
   --volume "${CONFIG_FILE}":/config:ro \
   -e "GIT_HASH=${GIT_HASH}" \

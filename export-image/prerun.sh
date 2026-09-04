@@ -49,9 +49,20 @@ if [ "${NO_PRERUN_QCOW2}" = "0" ]; then
 	BOOT_DEV="${LOOP_DEV}p1"
 	ROOT_DEV="${LOOP_DEV}p2"
 
+	LOOP_NAME="${LOOP_DEV#/dev/}"
+	if [ ! -b "${BOOT_DEV}" ]; then
+		kpartx -av "$LOOP_DEV" || true
+		if [ -b "/dev/mapper/${LOOP_NAME}p1" ]; then
+			BOOT_DEV="/dev/mapper/${LOOP_NAME}p1"
+			ROOT_DEV="/dev/mapper/${LOOP_NAME}p2"
+			ln -sf "/dev/mapper/${LOOP_NAME}p1" "${LOOP_DEV}p1" 2>/dev/null || true
+			ln -sf "/dev/mapper/${LOOP_NAME}p2" "${LOOP_DEV}p2" 2>/dev/null || true
+		fi
+	fi
+
 	ROOT_FEATURES="^huge_file"
 	for FEATURE in 64bit; do
-	if grep -q "$FEATURE" /etc/mke2fs.conf; then
+	if [ -f /etc/mke2fs.conf ] && grep -q "$FEATURE" /etc/mke2fs.conf; then
 		ROOT_FEATURES="^$FEATURE,$ROOT_FEATURES"
 	fi
 	done

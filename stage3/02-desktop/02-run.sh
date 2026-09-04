@@ -19,3 +19,15 @@ on_chroot << EOF
     chmod -R 755 /home/pi/.config/
     chown -R pi:root /home/pi/wallpaper/
 EOF
+
+# Add mixxx default sound config
+mkdir -p -m 755 ${ROOTFS_DIR}/home/pi/.mixxx/
+install -m 644 files/soundconfig.xml ${ROOTFS_DIR}/home/pi/.mixxx/soundconfig.xml
+on_chroot << CHROOT_EOF
+    chown -R pi:root /home/pi/.mixxx/
+    chmod -R 755 /home/pi/.mixxx/
+CHROOT_EOF
+
+# Fix missing default.qss for BiteDJ dropdown menus
+mkdir -p -m 755 ${ROOTFS_DIR}/usr/share/mixxx/skins/
+install -m 644 files/default.qss ${ROOTFS_DIR}/usr/share/mixxx/skins/default.qss
