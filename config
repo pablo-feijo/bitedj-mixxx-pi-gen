@@ -1,5 +1,5 @@
 IMG_NAME="bitedj-pi"
-RELEASE="bookworm"
+RELEASE="trixie"
 DEPLOY_ZIP=1
 LOCALE_DEFAULT="en_US.UTF-8"
 KEYBOARD_KEYMAP="us"
