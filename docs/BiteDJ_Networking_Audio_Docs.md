@@ -23,7 +23,7 @@ The default `blueman-manager` and `nmtui` managers were notoriously buggy and di
   - Displays a massive 1-tap list of paired headphones.
   - Automatically injects an explicit `disconnect` command before `connect` to guarantee the A2DP profile initializes without throwing "Device or Resource Busy" DBus errors.
   - Includes a pinned `[Disconnect Current Device]` option to instantly route audio back to the physical outputs.
-  - Includes a `[Pair New Device...]` fallback that opens the traditional `blueman-manager` for first-time pairings.
+  - Includes a `[Forget a Device...]` fallback utilizing `bluetoothctl remove`.
 
 ---
 
@@ -41,20 +41,18 @@ Routing Mixxx's Master output to a Bluetooth headset while simultaneously routin
 - **Problem:** When PortAudio tried to talk to the `default` PipeWire server, their memory clocks misaligned, generating thousands of `paOutputUnderflow` errors per second.
 - **Solution:** Injected `env PIPEWIRE_LATENCY="1024/44100"` into the Sway `bitedj` launch string. This forcefully synchronizes the daemon's clock with PortAudio, eliminating buffer underruns over wireless connections.
 
-### ALSA Hardware Un-Hiding
-- **Location:** `mixxx-pi-gen/stage3/02-desktop/files/i3.conf`
-- **Problem:** When attempting to route the CUE, the DDJ-400 vanished from the Mixxx sound preferences dropdown.
-- **Solution:** Re-injected the `PA_ALSA_PLUGHW=1` environment variable. This allows PortAudio to bypass the software mixer and probe the raw hardware nodes (`hw:CARD=DDJ400`), restoring it in the UI.
+### BCM2835 VCHI Kernel Panic Fix (Removed PA_ALSA_PLUGHW)
+- **Problem:** In previous versions (v0.0.3), we forced PortAudio to use raw hardware polling (`PA_ALSA_PLUGHW=1`) to reduce latency. However, selecting the physical Raspberry Pi Headphone jack (`bcm2835`) under these strict hardware parameters triggered a fatal `VCHI service connection (status=-11)` kernel panic, crashing the Pi.
+- **Solution:** We completely stripped `PA_ALSA_PLUGHW=1` from all launchers in v0.0.5. PortAudio now correctly interacts with the virtual ALSA stack, preventing the physical hardware driver from panicking.
 
-### Custom Bluetooth Naming Alias
-- **Location:** `mixxx-pi-gen/stage3/02-desktop/02-run.sh`
-- **Problem:** The option to select the Bluetooth headset was labeled as a highly confusing `default` in the Mixxx UI.
-- **Solution:** Automatically generates a `~/.asoundrc` alias containing:
-  ```text
-  pcm.Bluetooth {
-      type plug
-      slave.pcm "default"
-      hint { show on; description "Bluetooth Headphones (Wireless)" }
-  }
-  ```
-  Mixxx now dynamically lists **Bluetooth Headphones (Wireless)** as a primary soundcard option.
+### UI Device Filtering & Custom Naming
+- **Location:** `src/preferences/audiodevicesettings.cpp`
+- **Problem:** Removing the hardware flag caused the confusing virtual `"pipewire"` and `"default"` nodes to appear in the backend, but the Bite DJ UI filter strictly dropped them, hiding the Bluetooth audio option entirely.
+- **Solution:** The C++ array insertion logic was rewritten to explicitly whitelist the `"pipewire"` and `"sysdefault"` virtual ALSA nodes. When detected, the C++ engine dynamically overrides their display names to **"PipeWire / Bluetooth"** in the custom touchscreen skin, granting the user a completely intuitive audio routing selection without touching the dangerous physical hardware nodes.
+
+---
+
+## 3. Sway Workspace Ghosting Fix
+- **Location:** `mixxx-pi-gen/stage3/02-desktop/files/i3.conf`
+- **Problem:** The Sway compositor was given a literal quoted string (`set $ws1 "1:BiteDJ"`). Sway took the quotes literally, spawning the actual workspace as `1:BiteDJ` while instantly forcing focus to a ghost workspace named `"1:BiteDJ"`, resulting in a completely blank screen on boot.
+- **Solution:** Stripped all literal strings and replaced the variable with a raw integer (`workspace 1`). BiteDJ now reliably maps fullscreen onto the active screen at boot.
