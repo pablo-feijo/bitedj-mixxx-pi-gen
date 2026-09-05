@@ -27,7 +27,7 @@ fi
 	else
 		systemctl disable ssh
 	fi
-	systemctl enable rpi-resize
+	#systemctl enable rpi-resize
 	systemctl enable fstrim.timer
 	systemctl enable regenerate_ssh_host_keys
 EOF
