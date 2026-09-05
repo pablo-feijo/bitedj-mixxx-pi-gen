@@ -1,4 +1,6 @@
 #!/bin/bash
+pgrep -x "zenity" > /dev/null && exit 0
+pgrep -x "swaynag" > /dev/null && exit 0
 export WAYLAND_DISPLAY=wayland-1
 export GTK_CSD=1
 
