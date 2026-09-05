@@ -40,3 +40,4 @@ on_chroot << CHROOT_EOF
 CHROOT_EOF
 install -m 755 files/bitedj-wifi.sh "${ROOTFS_DIR}/usr/bin/bitedj-wifi"
 install -m 755 files/bitedj-bt.sh "${ROOTFS_DIR}/usr/bin/bitedj-bt"
+mkdir -p "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/" && install -m 644 files/wireplumber/51-ignore-ddj400.lua "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/"
