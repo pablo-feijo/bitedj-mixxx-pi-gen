@@ -1,4 +1,3 @@
-install -D -m 644 files/lightdm.ini ${ROOTFS_DIR}/etc/lightdm/lightdm.conf
 
 # Make sure pi owns its config files
 on_chroot << EOF

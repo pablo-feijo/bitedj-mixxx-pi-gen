@@ -31,3 +31,7 @@ CHROOT_EOF
 # Fix missing default.qss for BiteDJ dropdown menus
 mkdir -p -m 755 ${ROOTFS_DIR}/usr/share/mixxx/skins/
 install -m 644 files/default.qss ${ROOTFS_DIR}/usr/share/mixxx/skins/default.qss
+install -m 644 files/bash_profile ${ROOTFS_DIR}/home/pi/.bash_profile
+on_chroot << EOF
+    chown pi:pi /home/pi/.bash_profile
+EOF
