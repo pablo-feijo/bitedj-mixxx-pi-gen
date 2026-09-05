@@ -31,3 +31,10 @@ CHROOT_EOF
 # Fix missing default.qss for BiteDJ dropdown menus
 mkdir -p -m 755 ${ROOTFS_DIR}/usr/share/mixxx/skins/
 install -m 644 files/default.qss ${ROOTFS_DIR}/usr/share/mixxx/skins/default.qss
+
+# Install first-boot auto-resize service
+install -m 644 files/bitedj-resize.service ${ROOTFS_DIR}/etc/systemd/system/
+touch ${ROOTFS_DIR}/etc/bitedj_first_boot
+on_chroot << CHROOT_EOF
+    systemctl enable bitedj-resize.service
+CHROOT_EOF
