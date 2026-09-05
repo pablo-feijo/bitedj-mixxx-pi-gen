@@ -3,8 +3,8 @@ export WAYLAND_DISPLAY=wayland-1
 export GTK_CSD=1
 
 # Un-fullscreen Mixxx
-export SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -n 1)
-swaymsg '[app_id="(?i)bitedj"] fullscreen disable' || true
+export SWAYSOCK=$(ls -t /run/user/1000/sway-ipc.*.sock | head -n 1)
+swaymsg "fullscreen disable"
 
 # Start virtual keyboard
 /usr/bin/wvkbd-mobintl -L 100 & KBD=$!
