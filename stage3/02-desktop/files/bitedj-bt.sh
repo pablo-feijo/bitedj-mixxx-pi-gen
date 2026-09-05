@@ -11,7 +11,7 @@ swaymsg "fullscreen disable"
 # Get paired devices
 DEVICES=$(bluetoothctl devices Paired | sed 's/Device //g' | awk '{MAC=$1; $1=""; print MAC "\n" $0}')
 
-SELECTION=$(echo -e "DISCONNECT\n[Disconnect Current Device]\nPAIR_NEW\n[Pair New Device...]\n$DEVICES" | zenity --list --title="Bluetooth" --text="Tap an option below:" --column="MAC" --column="Name" --hide-column=1 --width=600 --height=400)
+SELECTION=$(echo -e "DISCONNECT\n[Disconnect Current Device]\nFORGET\n[Forget a Device...]\nPAIR_NEW\n[Pair New Device...]\n$DEVICES" | zenity --list --title="Bluetooth" --text="Tap an option below:" --column="MAC" --column="Name" --hide-column=1 --width=600 --height=400)
 
 if [ "$SELECTION" == "PAIR_NEW" ]; then
     blueman-manager &
@@ -22,9 +22,15 @@ if [ "$SELECTION" == "PAIR_NEW" ]; then
     killall swaynag 2>/dev/null
 elif [ "$SELECTION" == "DISCONNECT" ]; then
     zenity --info --text="Disconnecting audio..." --timeout=1 --no-wrap &
-    for mac in $(bluetoothctl info | grep "Device" | awk '{print $2}'); do
+    for mac in $(bluetoothctl devices Connected | awk '{print $2}'); do
         bluetoothctl disconnect "$mac"
     done
+elif [ "$SELECTION" == "FORGET" ]; then
+    FORGET_MAC=$(echo -e "$DEVICES" | zenity --list --title="Forget Device" --text="Select a device to remove permanently:" --column="MAC" --column="Name" --hide-column=1 --width=600 --height=400)
+    if [ -n "$FORGET_MAC" ]; then
+        zenity --info --text="Forgetting device..." --timeout=1 --no-wrap &
+        bluetoothctl remove "$FORGET_MAC"
+    fi
 elif [ -n "$SELECTION" ]; then
     zenity --info --text="Connecting to audio..." --timeout=2 --no-wrap &
     bluetoothctl disconnect "$SELECTION" 2>/dev/null
