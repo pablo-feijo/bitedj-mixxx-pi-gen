@@ -39,3 +39,4 @@ on_chroot << CHROOT_EOF
     systemctl enable bitedj-resize.service
 CHROOT_EOF
 install -m 755 files/bitedj-wifi.sh "${ROOTFS_DIR}/usr/bin/bitedj-wifi"
+install -m 755 files/bitedj-bt.sh "${ROOTFS_DIR}/usr/bin/bitedj-bt"

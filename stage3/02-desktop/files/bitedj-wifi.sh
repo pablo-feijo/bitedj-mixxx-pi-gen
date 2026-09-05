@@ -7,7 +7,7 @@ export SWAYSOCK=$(ls /run/user/1000/sway-ipc.*.sock | head -n 1)
 swaymsg '[app_id="(?i)bitedj"] fullscreen disable' || true
 
 # Start virtual keyboard
-/usr/bin/wvkbd-mobintl -L 250 -b & KBD=$!
+/usr/bin/wvkbd-mobintl -L 250 & KBD=$!
 
 zenity --info --text="Scanning for Wi-Fi networks..." --timeout=2 --no-wrap &
 nmcli dev wifi rescan
