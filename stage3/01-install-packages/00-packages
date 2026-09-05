@@ -48,3 +48,6 @@ plymouth
 plymouth-themes
 lightdm-gtk-greeter
 wayvnc
+xserver-xorg
+swaybg
+xdg-desktop-portal-wlr
