@@ -46,3 +46,4 @@ nautilus
 python3-pip
 plymouth
 plymouth-themes
+lightdm-gtk-greeter
