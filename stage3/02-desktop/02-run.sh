@@ -41,3 +41,5 @@ CHROOT_EOF
 install -m 755 files/bitedj-wifi.sh "${ROOTFS_DIR}/usr/bin/bitedj-wifi"
 install -m 755 files/bitedj-bt.sh "${ROOTFS_DIR}/usr/bin/bitedj-bt"
 mkdir -p "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/" && install -m 644 files/wireplumber/51-ignore-ddj400.lua "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/"
+mkdir -p "${ROOTFS_DIR}/etc/wireplumber/bluetooth.lua.d/" && install -m 644 files/wireplumber/51-force-a2dp.lua "${ROOTFS_DIR}/etc/wireplumber/bluetooth.lua.d/"
+install -m 644 files/wireplumber/52-disable-suspend.lua "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/"
