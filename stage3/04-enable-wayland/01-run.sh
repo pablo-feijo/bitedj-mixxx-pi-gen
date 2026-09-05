@@ -1,6 +1,6 @@
 # Enable wayland
 on_chroot << EOF
-	SUDO_USER=pi raspi-config nonint do_boot_behaviour B4
+	SUDO_USER=pi raspi-config nonint do_boot_behaviour B2
 	raspi-config nonint do_xcompmgr 0
 	SUDO_USER=pi raspi-config nonint do_wayland W2
 EOF
