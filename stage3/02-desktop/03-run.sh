@@ -18,5 +18,5 @@ on_chroot << EOF
     apt remove -y cups cups-browsed cups-daemon
     apt remove -y lxpanel lxsession lxlock lxpolkit lxmenu-data lxsession-logout
     apt remove -y openbox
-    apt autoremove -y
+    # apt autoremove -y
 EOF

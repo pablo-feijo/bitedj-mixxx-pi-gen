@@ -8,7 +8,7 @@ EOF
 # Remove cups
 on_chroot << EOF
     apt-get purge -y cups cups-common libcups2 system-config-printer printer-driver-* pocketsphinx-* pi-printer-support
-    apt-get autoremove -y
+    # apt-get autoremove -y
 EOF
 
 # Mask pipewire services
