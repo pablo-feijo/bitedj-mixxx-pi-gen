@@ -1,5 +1,8 @@
 # BiteDJ OS Image Generator (mixxx-pi-gen)
 
+> **Note:** This repository hosts a custom build of BiteDJ infrastructure. We are currently *vibe coding* on top of it to experiment with new embedded optimizations, audio routing, and kiosk workflows!
+
+
 This repository generates a customized Raspberry Pi OS image (Debian 13 "Trixie" based) tailored for **BiteDJ**, a DJ appliance fork of Mixxx. 
 This is a fork of the excellent [fayaaz/mixxx-pi-gen](https://github.com/fayaaz/mixxx-pi-gen).
 
