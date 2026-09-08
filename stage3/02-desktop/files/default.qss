@@ -1,0 +1,19 @@
+QComboBox {
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    padding: 5px;
+    min-height: 30px;
+}
+QComboBox QAbstractItemView {
+    background-color: #222222;
+    color: #FFFFFF;
+    selection-background-color: #0078D7;
+    selection-color: #FFFFFF;
+    border: 1px solid #555555;
+    outline: none;
+    min-width: 200px;
+}
+QComboBox::drop-down {
+    border: none;
+}

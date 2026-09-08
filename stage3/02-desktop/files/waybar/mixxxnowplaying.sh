@@ -16,7 +16,8 @@ case "$1" in
         fi
 
         while true; do
-            title=$(swaymsg -t get_tree | jq -r '.. | select(.app_id? == "org.mixxx.Mixxx") | .name' | head -1)
+            title=$(swaymsg -t get_tree | jq -r '.. | select(.app_id? == "us.deckshark.BiteDJ" or .app_id? == "org.mixxx.Mixxx") | .name' | head -1)
+            title="${title%Bite DJ}"
             title="${title%Mixxx}"
             echo "$title"
             echo -e "HTTP/1.1 200 OK\n\n$title" | nc -N -l -p $PORT

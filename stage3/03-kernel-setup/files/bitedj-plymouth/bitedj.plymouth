@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=BiteDJ
+Description=BiteDJ Splash Screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/bitedj
+ScriptFile=/usr/share/plymouth/themes/bitedj/bitedj.script

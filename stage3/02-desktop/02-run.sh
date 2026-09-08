@@ -19,3 +19,40 @@ on_chroot << EOF
     chmod -R 755 /home/pi/.config/
     chown -R pi:root /home/pi/wallpaper/
 EOF
+
+# Add mixxx default sound config
+mkdir -p -m 755 ${ROOTFS_DIR}/home/pi/.mixxx/
+install -m 644 files/soundconfig.xml ${ROOTFS_DIR}/home/pi/.mixxx/soundconfig.xml
+on_chroot << CHROOT_EOF
+    chown -R pi:root /home/pi/.mixxx/
+    chmod -R 755 /home/pi/.mixxx/
+CHROOT_EOF
+
+# Fix missing default.qss for BiteDJ dropdown menus
+mkdir -p -m 755 ${ROOTFS_DIR}/usr/share/mixxx/skins/
+install -m 644 files/default.qss ${ROOTFS_DIR}/usr/share/mixxx/skins/default.qss
+
+# Install first-boot auto-resize service
+install -m 644 files/bitedj-resize.service ${ROOTFS_DIR}/etc/systemd/system/
+touch ${ROOTFS_DIR}/etc/bitedj_first_boot
+on_chroot << CHROOT_EOF
+    systemctl enable bitedj-resize.service
+CHROOT_EOF
+install -m 755 files/bitedj-wifi.sh "${ROOTFS_DIR}/usr/bin/bitedj-wifi"
+install -m 755 files/bitedj-bt.sh "${ROOTFS_DIR}/usr/bin/bitedj-bt"
+mkdir -p "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/" && install -m 644 files/wireplumber/51-ignore-ddj400.lua "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/"
+install -m 644 files/wireplumber/52-disable-suspend.lua "${ROOTFS_DIR}/etc/wireplumber/main.lua.d/"
+mkdir -p "${ROOTFS_DIR}/etc/wireplumber/wireplumber.conf.d/" && install -m 644 files/wireplumber/wireplumber.conf.d/51-ignore-ddj400.conf "${ROOTFS_DIR}/etc/wireplumber/wireplumber.conf.d/"
+
+on_chroot << 'INNER'
+cat << 'ASND' > /etc/asound.conf
+pcm.Bluetooth {
+    type plug
+    slave.pcm "default"
+    hint {
+        show on
+        description "Bluetooth Headphones (Wireless)"
+    }
+}
+ASND
+INNER

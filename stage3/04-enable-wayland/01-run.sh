@@ -5,26 +5,23 @@ on_chroot << EOF
 	SUDO_USER=pi raspi-config nonint do_wayland W2
 EOF
 
+# Force software cursors so rotated displays render the cursor properly
+echo "WLR_NO_HARDWARE_CURSORS=1" >> ${ROOTFS_DIR}/etc/environment
+
 # Remove cups
 on_chroot << EOF
     apt-get purge -y cups cups-common libcups2 system-config-printer printer-driver-* pocketsphinx-* pi-printer-support
-    apt-get autoremove -y
+    # apt-get autoremove -y
+EOF
+
+on_chroot << EOF
+    # Ensure NetworkManager manages wifi
+    sed -i 's/managed=false/managed=true/g' /etc/NetworkManager/NetworkManager.conf
 EOF
 
 # Mask pipewire services
 on_chroot << EOF
-    systemctl mask pipewire
-    systemctl mask pipewire-pulse
-    systemctl mask wireplumber
-    systemctl mask --global pipewire
-    systemctl mask --global pipewire-pulse
-    systemctl mask --global wireplumber
     mkdir -p /home/pi/.config/systemd/user/
-    ln -sf /dev/null /home/pi/.config/systemd/user/pipewire.service
-    ln -sf /dev/null /home/pi/.config/systemd/user/pipewire.socket
-    ln -sf /dev/null /home/pi/.config/systemd/user/pipewire-pulse.service
-    ln -sf /dev/null /home/pi/.config/systemd/user/pipewire-pulse.socket
-    ln -sf /dev/null /home/pi/.config/systemd/user/wireplumber.service
     ln -sf /dev/null /home/pi/.config/systemd/user/pulseaudio.service
     ln -sf /dev/null /home/pi/.config/systemd/user/pulseaudio.socket
 EOF

@@ -6,7 +6,7 @@ fonts-droid-fallback
 fonts-liberation2 fonts-font-awesome fonts-jetbrains-mono
 systemd-timesyncd
 libgl1-mesa-dri libgles1 libgles2
-g++ git scons libportmidi-dev libopusfile-dev ffmpeg
+g++ git libportmidi-dev libopusfile-dev ffmpeg
 jq
 libshout-dev libtag1-dev libprotobuf-dev protobuf-compiler
 libusb-1.0-0-dev libfftw3-dev libmad0-dev portaudio19-dev
@@ -17,8 +17,16 @@ libgl-dev liblilv-dev
 libjack-dev libjack0 portaudio19-dev
 libfaad-dev
 libmp3lame-dev libebur128-dev
-qt5keychain-dev qtdeclarative5-dev libqt5opengl5-dev qtscript5-dev qt6-wayland
-libqt5svg5-dev libqt5x11extras5-dev libvamp-sdk2v5 libhidapi-libusb0 libqt5sql5-sqlite libmodplug-dev
+qt6-base-dev
+libqt6svg6-dev
+libqt6sql6-sqlite
+qt6-shadertools-dev
+libqt6core5compat6-dev
+qtkeychain-qt6-dev
+qt6-wayland
+qt6-qpa-plugins
+qml6-module-qt5compat-graphicaleffects
+libvamp-sdk2v5 libhidapi-libusb0 libmodplug-dev
 libglu1-mesa-dev
 cmake ccache
 debhelper markdown docbook-to-man devscripts
@@ -36,3 +44,14 @@ syncthing
 network-manager-gnome
 nautilus
 python3-pip
+plymouth
+plymouth-themes
+lightdm-gtk-greeter
+wayvnc
+xserver-xorg
+swaybg
+xdg-desktop-portal-wlr
+blueman
+libspa-0.2-bluetooth
+bluez-tools
+zenity

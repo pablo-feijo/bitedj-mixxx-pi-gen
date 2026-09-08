@@ -1,0 +1,16 @@
+background_image = Image("wallpaper.png");
+screen_ratio = Window.GetHeight() / Window.GetWidth();
+bg_image_ratio = background_image.GetHeight() / background_image.GetWidth();
+
+if (screen_ratio > bg_image_ratio) {
+    scale_factor = Window.GetHeight() / background_image.GetHeight();
+} else {
+    scale_factor = Window.GetWidth() / background_image.GetWidth();
+}
+
+scaled_bg = background_image.Scale(background_image.GetWidth() * scale_factor, background_image.GetHeight() * scale_factor);
+
+background_sprite = Sprite(scaled_bg);
+background_sprite.SetX((Window.GetWidth() - scaled_bg.GetWidth()) / 2);
+background_sprite.SetY((Window.GetHeight() - scaled_bg.GetHeight()) / 2);
+background_sprite.SetZ(-10000);
