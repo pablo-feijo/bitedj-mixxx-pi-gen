@@ -56,3 +56,8 @@ Flash the generated image from the `deploy/` folder to your SD card using tools 
 
 ---
 *Original instructions of the forked pi-gen repository are in [pi-gen-readme.md](pi-gen-readme.md)*
+
+## Changelog
+
+For a detailed list of changes and release notes, please see [CHANGELOG.md](CHANGELOG.md).
+
