@@ -7,8 +7,7 @@ Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 
 ## Release image 0.0.7
 
-`codex/v007-release` prepares `bitedj-pi-v0.0.7`; `codex/v0.0.7` remains
-the image integration target. Start future work on an isolated feature branch.
+`codex/v0.0.7` prepares `bitedj-pi-v0.0.7` and remains the image integration target. Start future work on an isolated feature branch.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
 `dist-linux` supplies the binary, current skin, controller mappings and resources.
