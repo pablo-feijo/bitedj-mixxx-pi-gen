@@ -20,6 +20,13 @@ jobs:
     env:
       BITEDJ_RELEASE_BUILD: '1'
       CONTAINER_NAME: bitedj-ci-image
+      # Linux Docker writes staging files as root; run both build wrappers with
+      # the same ownership. Trust only these two task checkouts for root Git.
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: ${{ github.workspace }}/application
+      GIT_CONFIG_KEY_1: safe.directory
+      GIT_CONFIG_VALUE_1: ${{ github.workspace }}/application/mixxx-pi-gen
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,11 +51,11 @@ jobs:
           python3 -m unittest discover -s tests/repository -p 'test_*.py'
       - name: Build the matching ARM64 application
         working-directory: application
-        run: ./scripts/build/docker-build.sh --platform linux/arm64
+        run: sudo -E ./scripts/build/docker-build.sh --platform linux/arm64
       - name: Build and verify the versioned OS image
         working-directory: application
         run: |
-          ./scripts/build/generate-pi-image.sh
+          sudo -E ./scripts/build/generate-pi-image.sh
           python3 - <<'PY'
           import pathlib, zipfile
           images = list(pathlib.Path('mixxx-pi-gen/deploy').glob('*.zip'))
