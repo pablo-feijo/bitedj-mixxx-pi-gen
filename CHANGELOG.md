@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.7] — Unreleased
+## [0.0.7] — 2026-09-09
 
 ### Changed
 
@@ -14,12 +14,13 @@
 - Refresh the reference profile for the BiteDJ skin, compact library layout
   and safe loading. The installer still lets the application create its own
   first-run profile; the reference profile is not installed automatically.
-- Integrate `codex/v007-custom-defaults` into `codex/v0.0.7` with a merge commit.
+- Support Debian 13 Trixie dependencies and verify Qt application versions
+  without requiring an interactive desktop.
 
 ### Documentation
 
 - Use isolated feature branches and Conventional Commits; synchronize the
   parent gitlink after image-generator changes.
 - Credit fayaaz/mixxx-pi-gen, Team Deckshark, Mixxx and xsploit for their work.
-- No image build, flash or release tag is included. Sustained audio and hardware
-  checks remain separate validation steps; generated test results are not tracked.
+- Record source/version provenance and keep generated images and test output
+  outside Git.

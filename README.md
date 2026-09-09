@@ -5,12 +5,10 @@ This is a fork of the excellent [fayaaz/mixxx-pi-gen](https://github.com/fayaaz/
 
 Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 
-## Working version 0.0.7
+## Release image 0.0.7
 
-`codex/v0.0.7` is the working integration branch, producing
-`bitedj-pi-v0.0.7`. Its Custom Bite DJ defaults were integrated from
-`codex/v007-custom-defaults` with a merge commit. Start future work on a new
-feature branch and merge back only when authorized.
+`codex/v007-release` prepares `bitedj-pi-v0.0.7`; `codex/v0.0.7` remains
+the image integration target. Start future work on an isolated feature branch.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
 `dist-linux` supplies the binary, current skin, controller mappings and resources.
@@ -23,8 +21,8 @@ copies belong here. See [CHANGELOG.md](CHANGELOG.md) for image changes.
 first-boot config: the existing installer deliberately leaves profile creation
 to the application. Its compact library, BiteDJ skin and safe loading values
 are kept current without importing developer VNC or device-specific settings.
-Sustained virtual-device audio validation remains open in the parent repository.
-This working version is not a published image or a hardware validation claim.
+The parent release notes distinguish application/desktop checks from a fresh
+image flash/boot and sustained audio or physical-device acceptance.
 
 Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
 the foundation, and xsploit/bitedj for the adapted application improvements.
