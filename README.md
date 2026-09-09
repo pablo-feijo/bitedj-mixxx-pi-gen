@@ -65,6 +65,14 @@ The build system relies on Docker and expects the pre-compiled BiteDJ Linux bina
 
 The resulting `.img` or `.zip` will be output into `mixxx-pi-gen/deploy/`.
 
+## Continuous integration
+
+PRs, main pushes and manual runs build the matching `codex/v0.0.7`
+application in ARM64 Docker, then generate and integrity-check the OS archive.
+The run records both source commits and uploads the image with application
+provenance. CI does not overwrite a nightly release; publishing a release is
+a separate maintainer action.
+
 ## How to install on your Raspberry Pi 3/4/400/5
 
 Flash the generated image from the `deploy/` folder to your SD card using tools like **Raspberry Pi Imager** or **BalenaEtcher**.

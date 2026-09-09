@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Build the matching ARM64 application before CI image generation, verify the archive and retain source provenance.
 - Include the user-approved boot overrides: `over_voltage=6`, `arm_freq=2000`,
   and `gpu_freq=750`. The local library visibility and 22px row-height changes
   are retained in the reference profile.
