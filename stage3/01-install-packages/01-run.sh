@@ -30,8 +30,8 @@ chmod 755 "${ROOTFS_DIR}/usr/bin/mixxx" "${ROOTFS_DIR}/usr/bin/bitedj" 2>/dev/nu
 
 # Record the installed binary's full version, never a fixed release label.
 BITEDJ_VERSION_OUTPUT=$(on_chroot -c 'QT_QPA_PLATFORM=offscreen /usr/bin/bitedj --version')
-BITEDJ_VERSION=${BITEDJ_VERSION_OUTPUT#Bite DJ }
-if [ "$BITEDJ_VERSION_OUTPUT" = "$BITEDJ_VERSION" ] || [ "$IMG_NAME" != "bitedj-pi-v${BITEDJ_VERSION}" ]; then
+BITEDJ_VERSION=$(printf '%s\n' "$BITEDJ_VERSION_OUTPUT" | sed -n 's/^Bite DJ //p')
+if [ -z "$BITEDJ_VERSION" ] || [ "$IMG_NAME" != "bitedj-pi-v${BITEDJ_VERSION}" ]; then
     echo "ERROR: Image name $IMG_NAME does not match installed binary: $BITEDJ_VERSION_OUTPUT" >&2
     exit 1
 fi
