@@ -29,6 +29,10 @@ This working version is not a published image or a hardware validation claim.
 Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
 the foundation, and xsploit/bitedj for the adapted application improvements.
 
+The 0.0.7 boot defaults include the user-approved `over_voltage=6`,
+`arm_freq=2000`, and `gpu_freq=750` overrides. These settings have not been
+validated by an image boot or physical-board test in this integration.
+
 ## Features Included
 - Pre-built **BiteDJ** installed directly into the image.
 - 64-bit Raspberry Pi OS (Debian 13 "Trixie").
