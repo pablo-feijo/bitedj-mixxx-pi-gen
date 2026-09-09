@@ -1,9 +1,27 @@
-# BiteDJ OS Image Generator (mixxx-pi-gen)
+# Custom Bite DJ OS Image Generator (mixxx-pi-gen)
 
 This repository generates a customized Raspberry Pi OS image (Debian 13 "Trixie" based) tailored for **BiteDJ**, a DJ appliance fork of Mixxx. 
 This is a fork of the excellent [fayaaz/mixxx-pi-gen](https://github.com/fayaaz/mixxx-pi-gen).
 
 Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
+
+## Working version 0.0.7
+
+`codex/v0.0.7` is the working image branch, producing `bitedj-pi-v0.0.7`.
+The parent Custom Bite DJ repository pins the exact commit via its submodule.
+Build the parent application's matching ARM64 version before creating an image;
+`dist-linux` supplies the binary, current skin, controller mappings and resources.
+That includes the two-deck layout, compact General settings, PAD FX as the third
+Settings tab, and the system-owned Pad FX presets. No skin copies belong here.
+
+`stage3/02-desktop/files/mixxx.cfg` is a reference profile, not an installed
+first-boot config: the existing installer deliberately leaves profile creation
+to the application. Its compact library, BiteDJ skin and safe loading values
+are kept current without importing developer VNC or device-specific settings.
+Rekordbox import/rendering validation remains tracked in the parent repository.
+
+Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
+the foundation, and xsploit/bitedj for the adapted application improvements.
 
 ## Features Included
 - Pre-built **BiteDJ** installed directly into the image.
@@ -46,7 +64,7 @@ Flash the generated image from the `deploy/` folder to your SD card using tools 
 
 ### Default Credentials
 - **Username**: `pi`
-- **Password**: `mixxx`
+- **Password**: `bitedj`
 - **Home directory**: `/home/pi/`
 
 ## Troubleshooting and Debugging
