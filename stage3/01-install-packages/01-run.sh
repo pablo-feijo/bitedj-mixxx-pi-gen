@@ -28,9 +28,15 @@ elif [ -f "${ROOTFS_DIR}/usr/bin/bitedj" ] && [ ! -f "${ROOTFS_DIR}/usr/bin/mixx
 fi
 chmod 755 "${ROOTFS_DIR}/usr/bin/mixxx" "${ROOTFS_DIR}/usr/bin/bitedj" 2>/dev/null || true
 
-# Set version metadata expected by export-image stage
+# Record the installed binary's full version, never a fixed release label.
+BITEDJ_VERSION_OUTPUT=$(on_chroot -c 'QT_QPA_PLATFORM=offscreen /usr/bin/bitedj --version')
+BITEDJ_VERSION=${BITEDJ_VERSION_OUTPUT#Bite DJ }
+if [ "$BITEDJ_VERSION_OUTPUT" = "$BITEDJ_VERSION" ] || [ "$IMG_NAME" != "bitedj-pi-v${BITEDJ_VERSION}" ]; then
+    echo "ERROR: Image name $IMG_NAME does not match installed binary: $BITEDJ_VERSION_OUTPUT" >&2
+    exit 1
+fi
 mkdir -p "${ROOTFS_DIR}/opt"
-echo "bitedj-1.0" > "${ROOTFS_DIR}/opt/mixxx.version"
-echo "v1.0" > "${ROOTFS_DIR}/opt/mixxx.tag"
-echo "bitedj-1.0" > "${ROOTFS_DIR}/opt/bitedj.version"
-echo "==> BiteDJ installed successfully."
+printf '%s\n' "$BITEDJ_VERSION" > "${ROOTFS_DIR}/opt/mixxx.version"
+printf 'v%s\n' "$BITEDJ_VERSION" > "${ROOTFS_DIR}/opt/mixxx.tag"
+printf '%s\n' "$BITEDJ_VERSION" > "${ROOTFS_DIR}/opt/bitedj.version"
+echo "==> BiteDJ $BITEDJ_VERSION installed successfully."

@@ -9,3 +9,4 @@ jobs:
       - uses: actions/checkout@v7
       - run: python3 scripts/test/check-git-storage.py
       - run: python3 tests/repository/test_git_storage.py
+      - run: python3 tests/repository/test_system_settings.py

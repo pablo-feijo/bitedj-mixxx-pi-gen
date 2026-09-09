@@ -1,4 +1,4 @@
-IMG_NAME="bitedj-pi-v0.0.7"
+IMG_NAME="bitedj-pi-v0.0.7-codex-pi-semver-deploy.6"
 RELEASE="trixie"
 DEPLOY_ZIP=1
 LOCALE_DEFAULT="en_US.UTF-8"

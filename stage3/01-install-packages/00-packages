@@ -4,7 +4,7 @@ polkitd
 rfkill
 fonts-droid-fallback
 fonts-liberation2 fonts-font-awesome fonts-jetbrains-mono
-systemd-timesyncd
+sudo systemd systemd-timesyncd tzdata
 libgl1-mesa-dri libgles1 libgles2
 g++ git libportmidi-dev libopusfile-dev ffmpeg
 jq
