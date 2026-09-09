@@ -3,7 +3,7 @@
 - Use Conventional Commits. Work on an isolated `codex/<topic>` branch and merge
   into the working semver branch when authorized; do not change another checkout.
 - `codex/v0.0.7` is the integration branch. Start follow-up implementation on a
-  new feature branch; never commit directly to semver. Use merge commits when
+  new feature branch; never commit directly to semver. Use one Conventional Commit via squash merge when
   the user authorizes integration. The initial defaults branch was
   `codex/v007-custom-defaults`.
 - Current integration target: `codex/v0.0.7`. Keep `config` IMG_NAME aligned with
@@ -20,3 +20,25 @@
 - The user explicitly approved the existing `over_voltage=6`, `arm_freq=2000`,
   and `gpu_freq=750` overrides for 0.0.7. Preserve these versioned settings;
   the restriction above still applies to importing other machine-specific changes.
+
+## Git storage, identity and build retention
+
+Follow [Git storage and build retention](docs/GIT_STORAGE.md). Run the staged
+1 MiB size guard before each commit; use LFS for indispensable larger assets,
+never for generated builds. Audit and reclaim superseded build outputs before
+and after build tasks, preserving current previews and unique data. Verify
+canonical author/committer identity; do not generate machine-local email addresses.
+
+## Documentation versus execution records
+
+Keep `/docs/` for concise, reusable human and agent guides. Store roadmaps,
+ignored `tasks/<topic>.md` checklists, progress logs and one-off activity reviews under ignored
+`/tasks/`; create it locally, never force-add it or link published docs to
+local task files. Put durable behavior, testing and attribution facts into
+the relevant guide. Keep screenshot captions to one short sentence; link
+control mappings and capture provenance rather than repeating them.
+
+During cleanup, remove completed execution plans and activity logs from `tasks/`
+after moving durable facts into the relevant guide. Keep active plans and
+unresolved backlog items; consolidate outstanding work instead of archiving
+finished task folders indefinitely. Never commit `tasks/` or its backups.
