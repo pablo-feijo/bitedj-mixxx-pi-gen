@@ -2,8 +2,10 @@
 
 - Use Conventional Commits. Work on an isolated `codex/<topic>` branch and merge
   into the working semver branch when authorized; do not change another checkout.
-- This chat's working branch is `codex/v007-custom-defaults`; never commit or
-  advance the semver integration branch until the user explicitly requests a merge.
+- `codex/v0.0.7` is the integration branch. Start follow-up implementation on a
+  new feature branch; never commit directly to semver. Use merge commits when
+  the user authorizes integration. The initial defaults branch was
+  `codex/v007-custom-defaults`.
 - Current integration target: `codex/v0.0.7`. Keep `config` IMG_NAME aligned with
   the parent application's BITEDJ_VERSION and update the parent gitlink after
   committing changes here. Publish referenced commits before publishing the parent.

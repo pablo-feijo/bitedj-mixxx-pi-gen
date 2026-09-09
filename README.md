@@ -7,19 +7,24 @@ Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 
 ## Working version 0.0.7
 
-`codex/v007-custom-defaults` is the working image branch, producing
-`bitedj-pi-v0.0.7`. Merge into `codex/v0.0.7` only when explicitly requested.
+`codex/v0.0.7` is the working integration branch, producing
+`bitedj-pi-v0.0.7`. Its Custom Bite DJ defaults were integrated from
+`codex/v007-custom-defaults` with a merge commit. Start future work on a new
+feature branch and merge back only when authorized.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
 `dist-linux` supplies the binary, current skin, controller mappings and resources.
 That includes the two-deck layout, compact General settings, PAD FX as the third
-Settings tab, and the system-owned Pad FX presets. No skin copies belong here.
+Settings tab, system-owned Pad FX presets, Rekordbox waveforms/optional phrases,
+colored cue previews, the Prepare queue and optional return to Play. No skin
+copies belong here. See [CHANGELOG.md](CHANGELOG.md) for image changes.
 
 `stage3/02-desktop/files/mixxx.cfg` is a reference profile, not an installed
 first-boot config: the existing installer deliberately leaves profile creation
 to the application. Its compact library, BiteDJ skin and safe loading values
 are kept current without importing developer VNC or device-specific settings.
-Rekordbox import/rendering validation remains tracked in the parent repository.
+Sustained virtual-device audio validation remains open in the parent repository.
+This working version is not a published image or a hardware validation claim.
 
 Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
 the foundation, and xsploit/bitedj for the adapted application improvements.
