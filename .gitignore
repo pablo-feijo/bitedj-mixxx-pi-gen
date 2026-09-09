@@ -7,3 +7,5 @@ SKIP_IMAGES
 *-pc
 apt-cacher-ng/
 .ccache/
+# Local agent roadmaps, execution checklists and activity records.
+/tasks/
