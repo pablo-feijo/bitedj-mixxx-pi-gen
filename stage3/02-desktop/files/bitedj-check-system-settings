@@ -1,0 +1,22 @@
+#!/bin/sh
+# Read-only image/live-device check. Never changes the clock or boot settings.
+set -eu
+# A chroot may inherit the C locale; Qt requires UTF-8 even without a GUI.
+export LC_ALL=C.UTF-8
+[ "$(id -u)" -ne 0 ] || { echo "Run this check as the desktop user." >&2; exit 1; }
+for tool in sudo timedatectl systemctl timeout; do
+    command -v "$tool" >/dev/null
+done
+[ -r /usr/share/zoneinfo/UTC ]
+sudo -n true
+sudo -n timedatectl --version >/dev/null
+sudo -n systemctl --version >/dev/null
+# Missing arguments must be rejected before any display or privileged write.
+# timeout also catches an old binary that opens a GUI instead of the helper.
+status=0
+output=$(timeout 10 sudo -n /usr/bin/bitedj --bitedj-apply-boot-settings 2>&1) || status=$?
+if [ "$status" -ne 1 ] || [ "$output" != "Invalid boot-settings request." ]; then
+    printf 'Boot-settings helper check failed (%s): %s\n' "$status" "$output" >&2
+    exit 1
+fi
+printf 'Clock, timezone and privileged boot-settings support available.\n'

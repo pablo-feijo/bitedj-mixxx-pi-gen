@@ -1,9 +1,34 @@
-# BiteDJ OS Image Generator (mixxx-pi-gen)
+# Custom Bite DJ OS Image Generator (mixxx-pi-gen)
 
 This repository generates a customized Raspberry Pi OS image (Debian 13 "Trixie" based) tailored for **BiteDJ**, a DJ appliance fork of Mixxx. 
 This is a fork of the excellent [fayaaz/mixxx-pi-gen](https://github.com/fayaaz/mixxx-pi-gen).
 
 Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
+
+## Release image 0.0.7
+
+`codex/v0.0.7` prepares `bitedj-pi-v0.0.7` and remains the image integration target. Start future work on an isolated feature branch.
+The parent Custom Bite DJ repository pins the exact commit via its submodule.
+Build the parent application's matching ARM64 version before creating an image;
+`dist-linux` supplies the binary, current skin, controller mappings and resources.
+That includes the two-deck layout, compact General settings, PAD FX as the third
+Settings tab, system-owned Pad FX presets, Rekordbox waveforms/optional phrases,
+colored cue previews, the Prepare queue and optional return to Play. No skin
+copies belong here. See [CHANGELOG.md](CHANGELOG.md) for image changes.
+
+`stage3/02-desktop/files/mixxx.cfg` is a reference profile, not an installed
+first-boot config: the existing installer deliberately leaves profile creation
+to the application. Its compact library, BiteDJ skin and safe loading values
+are kept current without importing developer VNC or device-specific settings.
+The parent release notes distinguish application/desktop checks from a fresh
+image flash/boot and sustained audio or physical-device acceptance.
+
+Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
+the foundation, and xsploit/bitedj for the adapted application improvements.
+
+The 0.0.7 boot defaults include the user-approved `over_voltage=6`,
+`arm_freq=2000`, and `gpu_freq=750` overrides. These settings have not been
+validated by an image boot or physical-board test in this integration.
 
 ## Features Included
 - Pre-built **BiteDJ** installed directly into the image.
@@ -40,13 +65,21 @@ The build system relies on Docker and expects the pre-compiled BiteDJ Linux bina
 
 The resulting `.img` or `.zip` will be output into `mixxx-pi-gen/deploy/`.
 
+## Continuous integration
+
+PRs, main pushes and manual runs build the matching `codex/v0.0.7`
+application in ARM64 Docker, then generate and integrity-check the OS archive.
+The run records both source commits and uploads the image with application
+provenance. CI does not overwrite a nightly release; publishing a release is
+a separate maintainer action.
+
 ## How to install on your Raspberry Pi 3/4/400/5
 
 Flash the generated image from the `deploy/` folder to your SD card using tools like **Raspberry Pi Imager** or **BalenaEtcher**.
 
 ### Default Credentials
 - **Username**: `pi`
-- **Password**: `mixxx`
+- **Password**: `bitedj`
 - **Home directory**: `/home/pi/`
 
 ## Troubleshooting and Debugging
@@ -57,7 +90,4 @@ Flash the generated image from the `deploy/` folder to your SD card using tools 
 ---
 *Original instructions of the forked pi-gen repository are in [pi-gen-readme.md](pi-gen-readme.md)*
 
-## Changelog
-
-For a detailed list of changes and release notes, please see [CHANGELOG.md](CHANGELOG.md).
-
+Repository contributors: follow [Git storage and build retention](docs/GIT_STORAGE.md).

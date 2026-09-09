@@ -1,155 +1,76 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    paths:
-      - "**"
-  schedule:
-    - cron: '30 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: image-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  # build_self_hosted:
-  #   runs-on: self-hosted
-  #   steps:
-  #   - name: 'Cleanup build folder'
-  #     run: |
-  #       ls -la ./
-  #       sudo rm -rf ./* || true
-  #       sudo rm -rf ./.??* || true
-  #       ls -la ./
-  #   - uses: actions/checkout@v4
-  #   - name: Update apt-get
-  #     run: sudo apt-get update
-  #   - name: Install deps
-  #     run: sudo apt-get -y install coreutils quilt parted kpartx qemu-utils qemu-user debootstrap zerofree zip dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file git curl bc
-  #   - run: mkdir .ccache
-  #   - name: "Set up ccache cache"
-  #     uses: actions/cache@v4
-  #     with:
-  #       path: .ccache
-  #       key: ccache-${{ github.head_ref }}-${{ github.run_number }}
-  #       restore-keys: |
-  #         ccache-${{ github.head_ref }}
-  #         ccache
-  #   - run: ls -lah .ccache
-  #   - name: Build
-  #     run: sudo ./build.sh
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: debs
-  #       path: deploy/*.deb
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: images
-  #       path: deploy/*.zip
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: packages-info
-  #       path: deploy/*.info
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: mixxx-version
-  #       path: deploy/*.version
   build:
     runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    env:
+      BITEDJ_RELEASE_BUILD: '1'
+      CONTAINER_NAME: bitedj-ci-image
     steps:
-    - uses: actions/checkout@v4
-    - name: Update apt-get
-      run: sudo apt-get update
-    - name: Install deps
-      run: sudo apt-get install coreutils quilt parted kpartx qemu-utils qemu-user debootstrap zerofree zip dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file git curl bc
-    - run: mkdir .ccache
-    - name: "Set up ccache cache"
-      uses: actions/cache@v4
-      with:
-        path: .ccache
-        key: ccache-${{ github.head_ref }}-${{ github.run_number }}
-        restore-keys: |
-          ccache-${{ github.head_ref }}
-          ccache
-    - run: ls -lah .ccache
-    - name: Build
-      run: sudo ./build.sh
-    - uses: actions/upload-artifact@v4
-      with:
-        name: debs-qemu
-        path: deploy/*.deb
-    - uses: actions/upload-artifact@v4
-      with:
-        name: images-qemu
-        path: deploy/*.zip
-    - uses: actions/upload-artifact@v4
-      with:
-        name: packages-info-qemu
-        path: deploy/*.info
-    - uses: actions/upload-artifact@v4
-      with:
-        name: mixxx-version-qemu
-        path: deploy/*.version
-    - uses: actions/upload-artifact@v4
-      with:
-        name: mixxx-tag-qemu
-        path: deploy/*.tag
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
-    - name: Download debs
-      uses: actions/download-artifact@v4
-      with:
-        name: debs-qemu
-        path: debs
-    - name: Download images
-      uses: actions/download-artifact@v4
-      with:
-        name: images-qemu
-        path: images
-    - name: Download packages-info
-      uses: actions/download-artifact@v4
-      with:
-        name: packages-info-qemu
-        path: info
-    - name: Download mixxx-version
-      uses: actions/download-artifact@v4
-      with:
-        name: mixxx-version-qemu
-        path: version
-    - name: Download mixxx-tag
-      uses: actions/download-artifact@v4
-      with:
-        name: mixxx-tag-qemu
-        path: tag
-    - name: Get mixxx version
-      id: mixxx-version
-      run: |
-        echo "COMMIT=$(cat version/*.version)" >> $GITHUB_OUTPUT
-        echo "TAG=$(cat tag/*.tag)" >> $GITHUB_OUTPUT
-    - name: Delete existing nightly release
-      run: |
-        if gh release view nightly --repo $GITHUB_REPOSITORY 2>/dev/null; then
-          gh release delete nightly --repo $GITHUB_REPOSITORY --cleanup-tag --yes
-        fi
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload to Nightly Release
-      uses: ncipollo/release-action@v1
-      with:
-        tag: nightly
-        name: Nightly (Mixxx ${{ steps.mixxx-version.outputs.TAG }})
-        body: |
-          ## Nightly Build
-          - [Mixxx ${{ steps.mixxx-version.outputs.TAG }}](https://github.com/mixxxdj/mixxx/commit/${{ steps.mixxx-version.outputs.COMMIT }})
-        prerelease: true
-        allowUpdates: true
-        immutableCreate: true
-        artifacts: "debs/*,images/*,info/*,version/*"
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          path: image-source
+      - name: Check out the matching application release
+        uses: actions/checkout@v4
+        with:
+          repository: pablo-feijo/custom-bitedj
+          ref: codex/v0.0.7
+          path: application
+      - name: Select release branch and image source
+        run: |
+          git -C application checkout -B codex/v0.0.7
+          rmdir application/mixxx-pi-gen
+          mv image-source application/mixxx-pi-gen
+          git -C application rev-parse HEAD
+          git -C application/mixxx-pi-gen rev-parse HEAD
+      - name: Validate the image recipe
+        working-directory: application/mixxx-pi-gen
+        run: |
+          python3 scripts/test/check-git-storage.py
+          python3 -m unittest discover -s tests/repository -p 'test_*.py'
+      - name: Build the matching ARM64 application
+        working-directory: application
+        run: ./scripts/build/docker-build.sh --platform linux/arm64
+      - name: Build and verify the versioned OS image
+        working-directory: application
+        run: |
+          ./scripts/build/generate-pi-image.sh
+          python3 - <<'PY'
+          import pathlib, zipfile
+          images = list(pathlib.Path('mixxx-pi-gen/deploy').glob('*.zip'))
+          assert images, 'No OS image was produced'
+          for image in images:
+              with zipfile.ZipFile(image) as archive:
+                  assert archive.testzip() is None, f'Corrupt archive: {image}'
+          PY
+      - name: Upload image and application provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitedj-pi-v0.0.7-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            application/mixxx-pi-gen/deploy/*.zip
+            application/mixxx-pi-gen/deploy/*.info
+            application/mixxx-pi-gen/deploy/*.version
+            application/mixxx-pi-gen/deploy/*.tag
+            application/dist-linux/build-provenance.json
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-build-logs
+          path: application/mixxx-pi-gen/deploy/*.log
