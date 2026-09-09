@@ -7,7 +7,8 @@ Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 
 ## Working version 0.0.7
 
-`codex/v0.0.7` is the working image branch, producing `bitedj-pi-v0.0.7`.
+`codex/v007-custom-defaults` is the working image branch, producing
+`bitedj-pi-v0.0.7`. Merge into `codex/v0.0.7` only when explicitly requested.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
 `dist-linux` supplies the binary, current skin, controller mappings and resources.
