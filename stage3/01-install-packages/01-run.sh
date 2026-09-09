@@ -12,7 +12,7 @@ fi
 
 if [ -z "${BITEDJ_DIST}" ] || [ ! -f "${BITEDJ_DIST}/bin/mixxx" -a ! -f "${BITEDJ_DIST}/bin/bitedj" ]; then
     echo "ERROR: BiteDJ build artifacts not found! Expected ${BITEDJ_DIST:-/dist-linux}/bin/mixxx" >&2
-    echo "Please build BiteDJ first using ./docker-build.sh" >&2
+    echo "Please build BiteDJ first using ./scripts/build/docker-build.sh" >&2
     exit 1
 fi
 
