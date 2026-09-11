@@ -8,7 +8,7 @@ Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 ## Image versions
 
 `codex/v0.0.7` remains the image integration target. This feature recipe matches
-application `0.0.8-codex-pi-ddj-recording.2`; its `IMG_NAME` carries that full
+application `0.0.8-codex-pi-ddj-recording.3`; its `IMG_NAME` carries that full
 version. Start future work on an isolated feature branch.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
