@@ -25,3 +25,4 @@ echo pi - rtprio 99 >> ${ROOTFS_DIR}/etc/security/limits.conf
 # Allow pi user to mount and unmount USB drives without password
 install -m 644 files/50-udisks.rules ${ROOTFS_DIR}/etc/polkit-1/rules.d/
 install -m 644 files/69-mixxx-usb-uaccess.rules ${ROOTFS_DIR}/etc/udev/rules.d/
+install -m 644 files/99-bitedj-usb-storage.rules ${ROOTFS_DIR}/etc/udev/rules.d/

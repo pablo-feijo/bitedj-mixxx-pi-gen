@@ -1,0 +1,5 @@
+# Keep playback reads responsive while recording to the same USB device.
+# Some USB mass-storage devices expose only two software request slots; reads
+# can then wait behind writeback before the scheduler gets to prioritize them.
+# BFQ's default low-latency mode gives streaming readers prompt service.
+ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", ENV{ID_BUS}=="usb", ATTR{queue/scheduler}=="*bfq*", ATTR{queue/scheduler}="bfq", ATTR{queue/nr_requests}="64"
