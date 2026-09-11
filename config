@@ -1,4 +1,4 @@
-IMG_NAME="bitedj-pi-v0.0.7"
+IMG_NAME="bitedj-pi-v0.0.8-codex-pi-ddj-recording.2"
 RELEASE="trixie"
 DEPLOY_ZIP=1
 LOCALE_DEFAULT="en_US.UTF-8"

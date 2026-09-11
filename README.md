@@ -5,9 +5,11 @@ This is a fork of the excellent [fayaaz/mixxx-pi-gen](https://github.com/fayaaz/
 
 Start DJing in minutes with a Raspberry Pi, a touchscreen, and a DJ controller!
 
-## Release image 0.0.7
+## Image versions
 
-`codex/v0.0.7` prepares `bitedj-pi-v0.0.7` and remains the image integration target. Start future work on an isolated feature branch.
+`codex/v0.0.7` remains the image integration target. This feature recipe matches
+application `0.0.8-codex-pi-ddj-recording.2`; its `IMG_NAME` carries that full
+version. Start future work on an isolated feature branch.
 The parent Custom Bite DJ repository pins the exact commit via its submodule.
 Build the parent application's matching ARM64 version before creating an image;
 `dist-linux` supplies the binary, current skin, controller mappings and resources.
@@ -67,8 +69,9 @@ The resulting `.img` or `.zip` will be output into `mixxx-pi-gen/deploy/`.
 
 ## Continuous integration
 
-PRs, main pushes and manual runs build the matching `codex/v0.0.7`
-application in ARM64 Docker, then generate and integrity-check the OS archive.
+PRs, main pushes and manual runs build the active `codex/v0.0.8`
+application in ARM64 Docker, derive the image name from its verified full
+version, then generate and integrity-check the OS archive.
 The run records both source commits and uploads the image with application
 provenance. CI does not overwrite a nightly release; publishing a release is
 a separate maintainer action.
@@ -91,3 +94,14 @@ Flash the generated image from the `deploy/` folder to your SD card using tools 
 *Original instructions of the forked pi-gen repository are in [pi-gen-readme.md](pi-gen-readme.md)*
 
 Repository contributors: follow [Git storage and build retention](docs/GIT_STORAGE.md).
+
+### Pi Wayland rendering
+
+The image exports `WLR_RENDER_DRM_DEVICE=/dev/dri/renderD128` before Sway starts.
+This selects the Pi 4/5 V3D render node instead of its display-only primary node.
+Without it, Wayland clients may use llvmpipe software rendering while direct EGL
+applications still use V3D, causing slow waveform and screen transitions.
+
+On a running image, verify the Wayland renderer with `eglinfo -B -p wayland`
+in the graphical session. It should report Broadcom V3D, not llvmpipe. Recheck
+large-WAV loading, playback and recording after restarting the graphical session.
