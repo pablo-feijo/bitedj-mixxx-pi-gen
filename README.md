@@ -28,9 +28,8 @@ image flash/boot and sustained audio or physical-device acceptance.
 Thanks to Team Deckshark, Mixxx, fayaaz/mixxx-pi-gen and their contributors for
 the foundation, and xsploit/bitedj for the adapted application improvements.
 
-The 0.0.7 boot defaults include the user-approved `over_voltage=6`,
-`arm_freq=2000`, and `gpu_freq=750` overrides. These settings have not been
-validated by an image boot or physical-board test in this integration.
+Current generic image builds leave CPU, GPU and voltage at Raspberry Pi firmware
+defaults. Board-specific tuning can be saved explicitly from the System tab.
 
 ## Features Included
 - Pre-built **BiteDJ** installed directly into the image.

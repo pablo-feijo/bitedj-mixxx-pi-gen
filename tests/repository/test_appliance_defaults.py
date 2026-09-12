@@ -10,13 +10,16 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config"
 CMDLINE = ROOT / "stage1/00-boot-files/files/cmdline.txt"
+BOOT_CONFIG = ROOT / "stage1/00-boot-files/files/config.txt"
 DESKTOP_RUN = ROOT / "stage3/02-desktop/01-run.sh"
+BOOT_FILES_RUN = ROOT / "stage1/00-boot-files/00-run.sh"
 SWAY_CONFIG = ROOT / "stage3/02-desktop/files/i3.conf"
 LAUNCHER = ROOT / "stage3/02-desktop/files/sway/scripts/launch-bitedj.sh"
 SSH_KEYGEN_UNIT = ROOT / "stage3/02-desktop/files/bitedj-ssh-keygen.service"
 SSH_DROP_IN = ROOT / "stage3/02-desktop/files/10-bitedj-host-keys.conf"
 SUDOERS = ROOT / "stage3/02-desktop/files/010_pi-nopasswd"
 SYSTEM_GATE = ROOT / "stage3/02-desktop/files/bitedj-check-system-settings"
+PLYMOUTH_SCRIPT = ROOT / "stage3/03-kernel-setup/files/bitedj-plymouth/bitedj.script"
 
 
 class ApplianceDefaultsTest(unittest.TestCase):
@@ -57,6 +60,23 @@ class ApplianceDefaultsTest(unittest.TestCase):
         cmdline = CMDLINE.read_text()
         self.assertIn("video=DSI-1:720x1280@60,rotate=90", cmdline)
         self.assertIn("video=DSI-2:720x1280@60,rotate=90", cmdline)
+
+    def test_plymouth_rotates_landscape_art_for_portrait_dsi_framebuffer(self):
+        script = PLYMOUTH_SCRIPT.read_text()
+        self.assertIn("Window.GetHeight() > Window.GetWidth()", script)
+        self.assertIn("background_image.Rotate(Math.Pi / 2)", script)
+        self.assertLess(script.index("background_image.Rotate(Math.Pi / 2)"),
+                        script.index("bg_image_ratio"))
+
+    def test_firmware_splash_is_disabled_in_favor_of_adaptive_plymouth(self):
+        self.assertIn("disable_splash=1", BOOT_CONFIG.read_text())
+        self.assertNotIn("files/splash.png", BOOT_FILES_RUN.read_text())
+
+    def test_generic_image_does_not_force_board_specific_overclock(self):
+        active_lines = [line.strip() for line in BOOT_CONFIG.read_text().splitlines()
+                        if line.strip() and not line.lstrip().startswith("#")]
+        for key in ("arm_freq=", "gpu_freq=", "over_voltage="):
+            self.assertFalse(any(line.startswith(key) for line in active_lines), key)
 
     def test_kiosk_workspace_prefers_dsi_and_starts_focused(self):
         sway = SWAY_CONFIG.read_text()

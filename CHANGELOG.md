@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Keep generic Pi 4 and Pi 5 images on firmware clock defaults.
+- Rotate the landscape Plymouth artwork for Touch Display 2's portrait-native
+  boot framebuffer while retaining the original HDMI presentation.
+- Disable the fixed firmware-level splash so it cannot appear vertically before
+  the adaptive Plymouth theme on Touch Display 2.
+
 ## [0.0.7] — 2026-09-09
 
 ### Changed

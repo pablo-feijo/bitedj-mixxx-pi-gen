@@ -17,9 +17,9 @@
 - Do not import live machine credentials, VNC settings or board-specific overclock
   changes into generic image defaults. Never flash hardware unless requested.
 
-- The user explicitly approved the existing `over_voltage=6`, `arm_freq=2000`,
-  and `gpu_freq=750` overrides for 0.0.7. Preserve these versioned settings;
-  the restriction above still applies to importing other machine-specific changes.
+- The 0.0.7 image historically carried `over_voltage=6`, `arm_freq=2000`, and
+  `gpu_freq=750`. Current generic images use firmware clock defaults; apply any
+  board-specific tuning explicitly on that device and keep it out of the recipe.
 
 ## Git storage, identity and build retention
 

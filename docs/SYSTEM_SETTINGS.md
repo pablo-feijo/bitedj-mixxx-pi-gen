@@ -20,8 +20,10 @@ The matching parent `dist-linux` supplies both the GUI and its helper. Save
 boot settings in Settings > System > Overclock, then restart the system to
 apply them. The helper validates the Pi model, values and original file hash,
 backs up the original and writes only the fixed boot configuration path.
-The image retains the approved 2000 MHz CPU / 750 MHz GPU / voltage 6 defaults;
-never copy a test board's temporary changes into the recipe.
+The generic image leaves CPU, GPU and voltage at firmware defaults. Never copy
+a test board's temporary clock changes into the recipe. Firmware defaults in
+the app saves removal of all three managed overrides immediately; custom values
+still use Save for next restart.
 
 For hardware validation, coordinate exclusive device access, record the current
 timezone/NTP and boot configuration, test a timezone change and restore it, then
