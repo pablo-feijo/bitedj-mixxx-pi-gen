@@ -20,6 +20,11 @@ else
     "$SWAYMSG" -- input type:touch map_to_output HDMI-A-1
 fi
 
+# A forced HDMI fallback can make Sway allocate workspace 1 to HDMI and focus a
+# blank workspace 2 on DSI. Only one output is active now, so select the kiosk
+# workspace before creating the application window.
+"$SWAYMSG" -- workspace number 1
+
 exec env \
     PIPEWIRE_LATENCY="1024/44100" \
     WLR_DRM_NO_MODIFIERS=1 \

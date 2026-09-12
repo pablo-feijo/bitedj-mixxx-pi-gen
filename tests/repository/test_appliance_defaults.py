@@ -9,6 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config"
+CMDLINE = ROOT / "stage1/00-boot-files/files/cmdline.txt"
 DESKTOP_RUN = ROOT / "stage3/02-desktop/01-run.sh"
 SWAY_CONFIG = ROOT / "stage3/02-desktop/files/i3.conf"
 LAUNCHER = ROOT / "stage3/02-desktop/files/sway/scripts/launch-bitedj.sh"
@@ -42,9 +43,20 @@ class ApplianceDefaultsTest(unittest.TestCase):
 
     def test_hdmi_and_touch_display_2_are_landscape(self):
         sway = SWAY_CONFIG.read_text()
-        self.assertIn("output HDMI-A-1 mode --custom 1024x600 transform 0", sway)
+        self.assertIn("output HDMI-A-1 disable", sway)
         self.assertIn("output DSI-1 mode 720x1280 transform 90", sway)
         self.assertIn("output DSI-2 mode 720x1280 transform 90", sway)
+        cmdline = CMDLINE.read_text()
+        self.assertIn("video=DSI-1:720x1280@60,rotate=90", cmdline)
+        self.assertIn("video=DSI-2:720x1280@60,rotate=90", cmdline)
+
+    def test_kiosk_workspace_prefers_dsi_and_starts_focused(self):
+        sway = SWAY_CONFIG.read_text()
+        self.assertIn("workspace 1 output DSI-1 DSI-2 HDMI-A-1", sway)
+        launcher = LAUNCHER.read_text()
+        self.assertIn('"$SWAYMSG" -- workspace number 1', launcher)
+        self.assertLess(launcher.index('"$SWAYMSG" -- workspace number 1'),
+                        launcher.index("exec env"))
 
     def test_launcher_prefers_dsi_and_maps_touch_to_selected_output(self):
         launcher = LAUNCHER.read_text()
@@ -90,23 +102,25 @@ class ApplianceDefaultsTest(unittest.TestCase):
             {"name": "DSI-2", "active": True},
         ])
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(calls[:3], [
+        self.assertEqual(calls[:4], [
             "-- output HDMI-A-1 disable",
             "-- output DSI-2 enable mode 720x1280",
             "-- input type:touch map_to_output DSI-2",
+            "-- workspace number 1",
         ])
-        self.assertTrue(calls[3].startswith("app --resourcePath"))
+        self.assertTrue(calls[4].startswith("app --resourcePath"))
 
     def test_launcher_keeps_hdmi_profile_without_dsi(self):
         result, calls = self.run_launcher([
             {"name": "HDMI-A-1", "active": True},
         ])
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(calls[:2], [
+        self.assertEqual(calls[:3], [
             "-- output HDMI-A-1 enable mode --custom 1024x600",
             "-- input type:touch map_to_output HDMI-A-1",
+            "-- workspace number 1",
         ])
-        self.assertTrue(calls[2].startswith("app --resourcePath"))
+        self.assertTrue(calls[3].startswith("app --resourcePath"))
 
 
 if __name__ == "__main__":
