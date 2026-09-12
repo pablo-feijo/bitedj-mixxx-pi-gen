@@ -5,10 +5,13 @@
 ### Changed
 
 - Keep generic Pi 4 and Pi 5 images on firmware clock defaults.
-- Rotate the landscape Plymouth artwork for Touch Display 2's portrait-native
-  boot framebuffer while retaining the original HDMI presentation.
+- Add pre-rotated Plymouth plumbing for Touch Display 2 while documenting that
+  the physical portrait-cropping issue remains unresolved.
 - Disable the fixed firmware-level splash so it cannot appear vertically before
   the adaptive Plymouth theme on Touch Display 2.
+- Keep DSI in its native portrait mode during kernel/Plymouth startup; Sway owns
+  the later 90-degree landscape transform for the application session. This did
+  not by itself correct the physical boot splash.
 
 ## [0.0.7] — 2026-09-09
 

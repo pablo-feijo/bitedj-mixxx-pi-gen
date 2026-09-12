@@ -1,10 +1,10 @@
-background_image = Image("wallpaper.png");
-
-# Touch Display 2 exposes its portrait-native 720x1280 framebuffer before
-# Sway applies the kiosk's 90-degree landscape transform. Rotate the landscape
-# artwork in framebuffer space; HDMI remains landscape and unchanged.
+# Touch Display 2 exposes its portrait-native 720x1280 framebuffer before Sway
+# applies the kiosk's landscape transform. Use a pre-rotated asset because the
+# Plymouth script renderer does not reliably expand bounds after Image.Rotate.
 if (Window.GetHeight() > Window.GetWidth()) {
-    background_image = background_image.Rotate(Math.Pi / 2);
+    background_image = Image("wallpaper-portrait.png");
+} else {
+    background_image = Image("wallpaper.png");
 }
 
 screen_ratio = Window.GetHeight() / Window.GetWidth();

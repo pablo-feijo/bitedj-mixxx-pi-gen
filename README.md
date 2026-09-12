@@ -30,6 +30,8 @@ the foundation, and xsploit/bitedj for the adapted application improvements.
 
 Current generic image builds leave CPU, GPU and voltage at Raspberry Pi firmware
 defaults. Board-specific tuning can be saved explicitly from the System tab.
+The Touch Display 2 application profile is validated, but its portrait-cropped
+Plymouth image remains under [documented investigation](docs/BOOT_SPLASH.md).
 
 ## Features Included
 - Pre-built **BiteDJ** installed directly into the image.

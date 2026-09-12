@@ -1,4 +1,4 @@
-IMG_NAME="bitedj-pi-v0.0.8-codex-pi-ssh-default.6"
+IMG_NAME="bitedj-pi-v0.0.8-codex-pi-ssh-default.7"
 RELEASE="trixie"
 DEPLOY_ZIP=1
 LOCALE_DEFAULT="en_US.UTF-8"

@@ -58,15 +58,19 @@ class ApplianceDefaultsTest(unittest.TestCase):
         self.assertIn("output DSI-1 mode 720x1280 transform 90", sway)
         self.assertIn("output DSI-2 mode 720x1280 transform 90", sway)
         cmdline = CMDLINE.read_text()
-        self.assertIn("video=DSI-1:720x1280@60,rotate=90", cmdline)
-        self.assertIn("video=DSI-2:720x1280@60,rotate=90", cmdline)
+        self.assertIn("video=DSI-1:720x1280@60", cmdline)
+        self.assertIn("video=DSI-2:720x1280@60", cmdline)
+        self.assertNotIn("video=DSI-1:720x1280@60,rotate=90", cmdline)
+        self.assertNotIn("video=DSI-2:720x1280@60,rotate=90", cmdline)
 
-    def test_plymouth_rotates_landscape_art_for_portrait_dsi_framebuffer(self):
+    def test_plymouth_includes_portrait_asset_candidate_for_dsi_framebuffer(self):
         script = PLYMOUTH_SCRIPT.read_text()
         self.assertIn("Window.GetHeight() > Window.GetWidth()", script)
-        self.assertIn("background_image.Rotate(Math.Pi / 2)", script)
-        self.assertLess(script.index("background_image.Rotate(Math.Pi / 2)"),
-                        script.index("bg_image_ratio"))
+        self.assertIn('Image("wallpaper-portrait.png")', script)
+        self.assertIn('Image("wallpaper.png")', script)
+        portrait = PLYMOUTH_SCRIPT.parent / "pioneer-portrait.png"
+        self.assertTrue(portrait.is_file())
+        self.assertIn("pioneer-portrait.png", (ROOT / "stage3/03-kernel-setup/00-run.sh").read_text())
 
     def test_firmware_splash_is_disabled_in_favor_of_adaptive_plymouth(self):
         self.assertIn("disable_splash=1", BOOT_CONFIG.read_text())

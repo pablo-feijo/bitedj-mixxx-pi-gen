@@ -9,8 +9,8 @@ cp files/bitedj-plymouth/bitedj.plymouth "${ROOTFS_DIR}/usr/share/plymouth/theme
 cp files/bitedj-plymouth/bitedj.script "${ROOTFS_DIR}/usr/share/plymouth/themes/bitedj/"
 # We copy the new pioneer splash from the plymouth theme folder
 cp files/bitedj-plymouth/pioneer.png "${ROOTFS_DIR}/usr/share/plymouth/themes/bitedj/wallpaper.png"
+cp files/bitedj-plymouth/pioneer-portrait.png "${ROOTFS_DIR}/usr/share/plymouth/themes/bitedj/wallpaper-portrait.png"
 
 on_chroot << EOF
     plymouth-set-default-theme -R bitedj
 EOF
-
