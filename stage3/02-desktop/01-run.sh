@@ -2,10 +2,30 @@
 # addition to ENABLE_SSH=1 enabling ssh.service during stage2.
 if [ "${ENABLE_SSH}" = "1" ]; then
     touch "${ROOTFS_DIR}/boot/firmware/ssh"
+    rm -f "${ROOTFS_DIR}/etc/ssh/sshd_not_to_be_run"
+    install -m 644 files/bitedj-ssh-keygen.service \
+        "${ROOTFS_DIR}/etc/systemd/system/bitedj-ssh-keygen.service"
+    mkdir -p "${ROOTFS_DIR}/etc/systemd/system/ssh.service.d"
+    install -m 644 files/10-bitedj-host-keys.conf \
+        "${ROOTFS_DIR}/etc/systemd/system/ssh.service.d/10-bitedj-host-keys.conf"
     on_chroot << 'SSH_GATE'
+        systemctl enable bitedj-ssh-keygen.service
+        systemctl enable ssh.service
         test -x /usr/sbin/sshd
         test "$(systemctl is-enabled ssh.service)" = enabled
+        test "$(systemctl is-enabled bitedj-ssh-keygen.service)" = enabled
         test "$(systemctl is-enabled regenerate_ssh_host_keys.service)" = enabled
+        test ! -e /etc/ssh/sshd_not_to_be_run
+        test -s /home/pi/.ssh/authorized_keys
+        test "$(stat -c %a /home/pi/.ssh/authorized_keys)" = 600
+        grep -Eq '^[[:space:]]*PasswordAuthentication[[:space:]]+no' /etc/ssh/sshd_config
+        install -d -m 755 /run/sshd
+        rm -f /etc/ssh/ssh_host_*_key*
+        ssh-keygen -A
+        sshd -t
+        sshd -T | grep -qx 'passwordauthentication no'
+        systemd-analyze verify bitedj-ssh-keygen.service ssh.service
+        rm -f /etc/ssh/ssh_host_*_key*
 SSH_GATE
 fi
 

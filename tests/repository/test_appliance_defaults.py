@@ -12,15 +12,33 @@ CONFIG = ROOT / "config"
 DESKTOP_RUN = ROOT / "stage3/02-desktop/01-run.sh"
 SWAY_CONFIG = ROOT / "stage3/02-desktop/files/i3.conf"
 LAUNCHER = ROOT / "stage3/02-desktop/files/sway/scripts/launch-bitedj.sh"
+SSH_KEYGEN_UNIT = ROOT / "stage3/02-desktop/files/bitedj-ssh-keygen.service"
+SSH_DROP_IN = ROOT / "stage3/02-desktop/files/10-bitedj-host-keys.conf"
 
 
 class ApplianceDefaultsTest(unittest.TestCase):
     def test_ssh_is_enabled_and_asserted_during_image_build(self):
         self.assertIn("ENABLE_SSH=1", CONFIG.read_text())
+        self.assertIn("PUBKEY_ONLY_SSH=1", CONFIG.read_text())
+        self.assertIn("PUBKEY_SSH_FIRST_USER=\"ssh-ed25519 ", CONFIG.read_text())
         stage = DESKTOP_RUN.read_text()
         self.assertIn('touch "${ROOTFS_DIR}/boot/firmware/ssh"', stage)
         self.assertIn("systemctl is-enabled ssh.service", stage)
+        self.assertIn("systemctl is-enabled bitedj-ssh-keygen.service", stage)
         self.assertIn("systemctl is-enabled regenerate_ssh_host_keys.service", stage)
+        self.assertIn("rm -f \"${ROOTFS_DIR}/etc/ssh/sshd_not_to_be_run\"", stage)
+        self.assertIn("ssh-keygen -A", stage)
+        self.assertIn("sshd -t", stage)
+        self.assertIn("sshd -T | grep -qx 'passwordauthentication no'", stage)
+        self.assertIn("systemd-analyze verify bitedj-ssh-keygen.service ssh.service", stage)
+
+    def test_ssh_generates_host_keys_before_daemon_start(self):
+        keygen = SSH_KEYGEN_UNIT.read_text()
+        drop_in = SSH_DROP_IN.read_text()
+        self.assertIn("Before=ssh.service", keygen)
+        self.assertIn("ExecStart=/usr/bin/ssh-keygen -A", keygen)
+        self.assertIn("Requires=bitedj-ssh-keygen.service", drop_in)
+        self.assertIn("After=bitedj-ssh-keygen.service", drop_in)
 
     def test_hdmi_and_touch_display_2_are_landscape(self):
         sway = SWAY_CONFIG.read_text()

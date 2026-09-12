@@ -1,4 +1,4 @@
-IMG_NAME="bitedj-pi-v0.0.8-codex-pi-ssh-default.1"
+IMG_NAME="bitedj-pi-v0.0.8-codex-pi-ssh-default.2"
 RELEASE="trixie"
 DEPLOY_ZIP=1
 LOCALE_DEFAULT="en_US.UTF-8"
@@ -8,4 +8,6 @@ TIMEZONE_DEFAULT="UTC"
 FIRST_USER_NAME="pi"
 FIRST_USER_PASS="bitedj"
 ENABLE_SSH=1
+PUBKEY_ONLY_SSH=1
+PUBKEY_SSH_FIRST_USER="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKPK7CVqXOe64doXyB8hSBqBkZbcmquk0mpF5VtTd2w1 bitedj-pi-recovery"
 TARGET_HOSTNAME="bitedj"
