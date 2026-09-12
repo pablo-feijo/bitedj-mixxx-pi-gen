@@ -15,6 +15,8 @@ SWAY_CONFIG = ROOT / "stage3/02-desktop/files/i3.conf"
 LAUNCHER = ROOT / "stage3/02-desktop/files/sway/scripts/launch-bitedj.sh"
 SSH_KEYGEN_UNIT = ROOT / "stage3/02-desktop/files/bitedj-ssh-keygen.service"
 SSH_DROP_IN = ROOT / "stage3/02-desktop/files/10-bitedj-host-keys.conf"
+SUDOERS = ROOT / "stage3/02-desktop/files/010_pi-nopasswd"
+SYSTEM_GATE = ROOT / "stage3/02-desktop/files/bitedj-check-system-settings"
 
 
 class ApplianceDefaultsTest(unittest.TestCase):
@@ -40,6 +42,12 @@ class ApplianceDefaultsTest(unittest.TestCase):
         self.assertIn("ExecStart=/usr/bin/ssh-keygen -A", keygen)
         self.assertIn("Requires=bitedj-ssh-keygen.service", drop_in)
         self.assertIn("After=bitedj-ssh-keygen.service", drop_in)
+
+    def test_desktop_user_has_noninteractive_systemctl_capability(self):
+        self.assertEqual(SUDOERS.read_text().strip(), "pi ALL=(ALL) NOPASSWD: ALL")
+        gate = SYSTEM_GATE.read_text()
+        self.assertIn("sudo -n true", gate)
+        self.assertIn("sudo -n systemctl --version", gate)
 
     def test_hdmi_and_touch_display_2_are_landscape(self):
         sway = SWAY_CONFIG.read_text()

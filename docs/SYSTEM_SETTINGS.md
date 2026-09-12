@@ -1,14 +1,20 @@
 # Clock and overclock support
 
 BiteDJ runs as the normal `pi` desktop user. The image retains its existing
-passwordless sudo policy; the app elevates only clock changes and the headless
-boot-settings helper. Running the GUI as root would use different library and
-audio settings.
+passwordless sudo policy; the app elevates clock changes, the headless
+boot-settings helper, system restart/power-off and SSH service mutations.
+Running the GUI as root would use different library and audio settings.
 
 Stage 3 installs sudo, systemd/timedatectl, timesyncd and timezone data, validates
 sudoers, enables time synchronization, and runs the read-only capability check
 as `pi`. A missing helper or permission failure stops image creation. Run the
 same check on a booted Pi with `/usr/lib/bitedj/check-system-settings`.
+
+Settings > Info > SSH Remote Access reads the service without elevation and
+uses `sudo -n systemctl enable --now ssh.service` or `disable --now` to change
+it. Authentication remains key-only. Restart system from Power or Overclock and
+Power off use the same noninteractive sudo path; no graphical Polkit agent or
+password prompt is required.
 
 The matching parent `dist-linux` supplies both the GUI and its helper. Save
 boot settings in Settings > System > Overclock, then restart the system to
