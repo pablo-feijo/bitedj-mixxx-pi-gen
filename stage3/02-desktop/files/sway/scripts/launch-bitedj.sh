@@ -15,9 +15,14 @@ if [ -n "$dsi_output" ]; then
     "$SWAYMSG" -- output HDMI-A-1 disable
     "$SWAYMSG" -- output "$dsi_output" enable mode 720x1280
     "$SWAYMSG" -- input type:touch map_to_output "$dsi_output"
+    # Touch Display 2 packs 1280x720 pixels into the same seven-inch class as
+    # the original 1024x600 panel. Scale the whole Qt surface, including native
+    # menus and dialogs, so text and controls retain a usable physical size.
+    ui_scale=1.20
 else
     "$SWAYMSG" -- output HDMI-A-1 enable mode --custom 1024x600
     "$SWAYMSG" -- input type:touch map_to_output HDMI-A-1
+    ui_scale=1.00
 fi
 
 # A forced HDMI fallback can make Sway allocate workspace 1 to HDMI and focus a
@@ -28,6 +33,7 @@ fi
 exec env \
     PIPEWIRE_LATENCY="1024/44100" \
     WLR_DRM_NO_MODIFIERS=1 \
+    QT_SCALE_FACTOR="$ui_scale" \
     QT_WAYLAND_SHELL_INTEGRATION=xdg-shell \
     "$BITEDJ_EXECUTABLE" \
     --resourcePath /usr/share/mixxx/ \

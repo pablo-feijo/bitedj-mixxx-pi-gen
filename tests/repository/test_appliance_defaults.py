@@ -80,7 +80,10 @@ class ApplianceDefaultsTest(unittest.TestCase):
             )
             swaymsg.chmod(0o755)
             app = base / "bitedj"
-            app.write_text("#!/bin/sh\nprintf 'app %s\\n' \"$*\" >> \"$TEST_CALLS\"\n")
+            app.write_text(
+                "#!/bin/sh\n"
+                "printf 'app scale=%s %s\\n' \"${QT_SCALE_FACTOR:-}\" \"$*\" >> \"$TEST_CALLS\"\n"
+            )
             app.chmod(0o755)
             result = subprocess.run(
                 ["sh", str(LAUNCHER)],
@@ -108,7 +111,7 @@ class ApplianceDefaultsTest(unittest.TestCase):
             "-- input type:touch map_to_output DSI-2",
             "-- workspace number 1",
         ])
-        self.assertTrue(calls[4].startswith("app --resourcePath"))
+        self.assertTrue(calls[4].startswith("app scale=1.20 --resourcePath"))
 
     def test_launcher_keeps_hdmi_profile_without_dsi(self):
         result, calls = self.run_launcher([
@@ -120,7 +123,16 @@ class ApplianceDefaultsTest(unittest.TestCase):
             "-- input type:touch map_to_output HDMI-A-1",
             "-- workspace number 1",
         ])
-        self.assertTrue(calls[3].startswith("app --resourcePath"))
+        self.assertTrue(calls[3].startswith("app scale=1.00 --resourcePath"))
+
+    def test_manual_launchers_reuse_the_display_profile(self):
+        for relative in (
+            "stage3/02-desktop/files/waybar/mixxx.sh",
+            "stage3/02-desktop/files/i3blocks/scripts/mixxx.sh",
+        ):
+            launcher = (ROOT / relative).read_text()
+            self.assertIn("/home/pi/.config/sway/scripts/launch-bitedj.sh", launcher)
+            self.assertNotIn("/usr/bin/bitedj --resourcePath", launcher)
 
 
 if __name__ == "__main__":
