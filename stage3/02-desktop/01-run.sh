@@ -1,5 +1,13 @@
-# Enable ssh.
-# touch ${ROOTFS_DIR}/boot/ssh
+# Keep the boot-partition SSH sentinel as a second, first-boot-safe assertion in
+# addition to ENABLE_SSH=1 enabling ssh.service during stage2.
+if [ "${ENABLE_SSH}" = "1" ]; then
+    touch "${ROOTFS_DIR}/boot/firmware/ssh"
+    on_chroot << 'SSH_GATE'
+        test -x /usr/sbin/sshd
+        test "$(systemctl is-enabled ssh.service)" = enabled
+        test "$(systemctl is-enabled regenerate_ssh_host_keys.service)" = enabled
+SSH_GATE
+fi
 
 # Boot to graphical by default
 on_chroot << EOF

@@ -10,6 +10,7 @@ ln -sf /dev/null ${ROOTFS_DIR}/home/pi/.config/systemd/user/xdg-desktop-portal-g
 ln -sf /dev/null ${ROOTFS_DIR}/home/pi/.config/systemd/user/xdg-desktop-portal-wlr.service
 mkdir -p -m 755 ${ROOTFS_DIR}/home/pi/.config/sway/scripts/
 install -m 755 files/sway/scripts/auto_exit_fullscreen.sh ${ROOTFS_DIR}/home/pi/.config/sway/scripts/
+install -m 755 files/sway/scripts/launch-bitedj.sh ${ROOTFS_DIR}/home/pi/.config/sway/scripts/
 # install -m 755 files/scripts/pipewire-toggle.sh ${ROOTFS_DIR}/home/pi/
 cp -r files/wallpaper ${ROOTFS_DIR}/home/pi/
 cp -r files/i3blocks ${ROOTFS_DIR}/home/pi/.config/
